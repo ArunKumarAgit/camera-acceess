@@ -123,6 +123,10 @@
         go back (y u want go back u already took photo write)
       </button>
       <button @click="gofortakingidpicture()">next</button>
+      <button @click="stopCameraStream()">here the end</button>
+      <button v-if="isCameraOpen === false" @click="createCameraElement()">
+        i want to start agian
+      </button>
     </div>
   </div>
 </template>
@@ -161,6 +165,8 @@ export default {
     },
 
     createCameraElement() {
+      this.isCameraOpen = true;
+
       this.isLoading = true;
 
       const constraints = (window.constraints = {
@@ -181,8 +187,8 @@ export default {
     },
 
     stopCameraStream() {
+      this.isCameraOpen = false;
       let tracks = this.$refs.camera.srcObject.getTracks();
-
       tracks.forEach(track => {
         track.stop();
       });
