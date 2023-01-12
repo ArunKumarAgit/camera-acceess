@@ -44,7 +44,7 @@
         </button>
       </div>
 
-      <div v-if="isPhotoTaken && isCameraOpen" class="camera-download">
+      <span v-if="isPhotoTaken && isCameraOpen" class="camera-download">
         <a
           id="downloadPhoto"
           download="my-photo.jpg"
@@ -54,7 +54,7 @@
         >
           Download
         </a>
-      </div>
+      </span>
     </div>
     <div v-if="!firstShowSnapshots" id="app" class="web-camera-container">
       <div v-show="isCameraOpen && isLoading" class="camera-loading">
@@ -123,6 +123,7 @@
         go back (y u want go back u already took photo write)
       </button>
       <button @click="gofortakingidpicture()">next</button>
+      <button @click="stopCamera()">stop</button>
     </div>
   </div>
 </template>
@@ -141,7 +142,15 @@ export default {
   created() {
     this.toggleCamera();
   },
+  watch: {
+    isPhotoTaken() {
+      console.log("derdf");
+    },
+  },
   methods: {
+    stopCamera() {
+      console.log("i tried but idk what is the result");
+    },
     gofortakingidpicture() {
       this.firstShowSnapshots = false;
     },
