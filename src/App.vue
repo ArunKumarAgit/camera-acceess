@@ -2,7 +2,8 @@
   <div id="app">
     <nav>
       <router-link to="/">cam access by arun </router-link> |
-      <router-link to="/about">theme</router-link>
+      <router-link to="/about">theme</router-link> |
+      <router-link to="/m2">mobile check 2</router-link>
     </nav>
     <router-view />
   </div>
