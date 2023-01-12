@@ -120,7 +120,7 @@ export default {
     // }
     takeSnap(event) {
       console.log(event);
-      takePicture();
+      this.takePicture();
       event.preventDefault();
     },
   },
