@@ -383,7 +383,7 @@ body {
             </div>
             <div class="mt-3 d-flex align-items-center justify-content-center">
               <button type="button" class="checkbtn">
-                <img src="../../assets/icons/systemcheck/capture.svg" alt="" />
+                <img src="../assets/icons/systemcheck/capture.svg" alt="" />
                 {{ imageTakenStatus }}
               </button>
             </div>
@@ -399,11 +399,7 @@ body {
         <b-col cols="3">
           <div class="mss-next-btn mt-5">
             Next
-            <img
-              src="../../assets/mobilesvgs/nxtvector.svg"
-              class="ml-2"
-              alt=""
-            />
+            <img src="../assets/mobilesvgs/nxtvector.svg" class="ml-2" alt="" />
           </div>
         </b-col>
       </b-row>
@@ -458,10 +454,7 @@ body {
                 </div>
                 <div class="text-center mt-3">
                   <button type="button" class="checkbtn">
-                    <img
-                      src="../../assets/icons/systemcheck/capture.svg"
-                      alt=""
-                    />
+                    <img src="../assets/icons/systemcheck/capture.svg" alt="" />
                     {{ idCardImageTakenStatus }}
                   </button>
                 </div>
@@ -477,7 +470,7 @@ body {
             <div class="mss-next-btn mt-5">
               Next
               <img
-                src="../../assets/mobilesvgs/nxtvector.svg"
+                src="../assets/mobilesvgs/nxtvector.svg"
                 class="ml-2"
                 alt=""
               />
@@ -498,7 +491,7 @@ body {
           <div v-if="showsteptwo == false">
             <div class="mobloc-steptext">Please click on site settings</div>
             <div class="mt-3">
-              <img src="../../assets/mobilesvgs/stepone.svg" alt="" />
+              <img src="../assets/mobilesvgs/stepone.svg" alt="" />
             </div>
             <div class="d-flex align-items-center justify-content-end mt-3">
               <b-button class="addbtn" @click="showsteptwo = true"
@@ -511,7 +504,7 @@ body {
           <div v-if="showsteptwo == true">
             <div class="mobloc-steptext">2. And Enable all permissions</div>
             <div class="text-center mt-3">
-              <img src="../../assets/mobilesvgs/step2.svg" alt="" />
+              <img src="../assets/mobilesvgs/step2.svg" alt="" />
             </div>
             <div class="d-flex align-items-center justify-content-between mt-3">
               <div class="mobloc-bcktxt" @click="showsteptwo = false">Back</div>
@@ -533,7 +526,7 @@ body {
           <div v-if="showsteptwo == false">
             <div class="mobloc-steptext">Please click on site settings</div>
             <div class="mt-3">
-              <img src="../../assets/mobilesvgs/iosModela1.svg" alt="" />
+              <img src="../assets/mobilesvgs/iosModela1.svg" alt="" />
             </div>
             <div class="d-flex align-items-center justify-content-end mt-3">
               <b-button class="addbtn" @click="showsteptwo = true"
@@ -546,7 +539,7 @@ body {
           <div v-if="showsteptwo == true">
             <div class="mobloc-steptext">2. And Enable all permissions</div>
             <div class="text-center mt-3">
-              <img src="../../assets/mobilesvgs/iosmodela2.svg" alt="" />
+              <img src="../assets/mobilesvgs/iosmodela2.svg" alt="" />
             </div>
             <div class="d-flex align-items-center justify-content-between mt-3">
               <div class="mobloc-bcktxt" @click="showsteptwo = false">Back</div>
