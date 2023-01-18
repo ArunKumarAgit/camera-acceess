@@ -338,6 +338,8 @@ body {
 
 <template>
   <div>
+    <video id="mobileselfieCam" autoplay muted playsinline>Not available</video>
+
     <div v-show="snapShotComponent">
       <div class="mtd-header">Add your Snapshot</div>
       <div class="mss-detail-container">
