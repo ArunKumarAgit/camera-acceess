@@ -338,8 +338,6 @@ body {
 
 <template>
   <div>
-    <!-- <video id="mobileselfieCam" autoplay muted playsinline>Not available</video> -->
-
     <div v-show="snapShotComponent">
       <div class="mtd-header">Add your Snapshot</div>
       <div class="mss-detail-container">
@@ -366,8 +364,12 @@ body {
         <b-row>
           <b-col cols="12">
             <div class="mt-2">
-              <div class="d-flex align-items-center justify-content-center">
+              <div
+                class="d-flex align-items-center justify-content-center"
+                v-if="isCameraOpen"
+              >
                 <video
+                  v-show="!isPhotoTaken"
                   id="mobileselfieCam"
                   ref="camera"
                   :width="265"
@@ -376,10 +378,6 @@ body {
                   muted
                   playsinline
                 ></video>
-                <!-- <video id="mobileselfieCam" autoplay muted playsinline>
-                  Not available
-                </video> -->
-
                 <canvas
                   v-show="isPhotoTaken"
                   id="photoTaken"
@@ -390,7 +388,7 @@ body {
               </div>
             </div>
             <div class="mt-3 d-flex align-items-center justify-content-center">
-              <button type="button" class="checkbtn">
+              <button type="button" class="checkbtn" @click="takePhoto">
                 <img src="../assets/icons/systemcheck/capture.svg" alt="" />
                 {{ imageTakenStatus }}
               </button>
@@ -405,7 +403,7 @@ body {
           </div>
         </b-col>
         <b-col cols="3">
-          <div class="mss-next-btn mt-5">
+          <div @click="goToTakeId()" class="mss-next-btn mt-5">
             Next
             <img src="../assets/mobilesvgs/nxtvector.svg" class="ml-2" alt="" />
           </div>
@@ -446,11 +444,13 @@ body {
                 >
                   <video
                     v-show="!idisPhotoTaken"
-                    id="mobileselfieCam"
+                    id="midCam"
                     ref="idcamera"
                     :width="265"
                     :height="200"
                     autoplay
+                    muted
+                    playsinline
                   ></video>
                   <canvas
                     v-show="idisPhotoTaken"
@@ -461,7 +461,7 @@ body {
                   ></canvas>
                 </div>
                 <div class="text-center mt-3">
-                  <button type="button" class="checkbtn">
+                  <button type="button" class="checkbtn" @click="idtakePhoto">
                     <img src="../assets/icons/systemcheck/capture.svg" alt="" />
                     {{ idCardImageTakenStatus }}
                   </button>
@@ -472,9 +472,11 @@ body {
         </div>
         <b-row class="m-1">
           <b-col cols="9">
-            <div class="mss-nxt-note mt-5 text-underline">Previous</div>
+            <div @click="goToSelfie()" class="mss-nxt-note mt-5 text-underline">
+              Previous
+            </div>
           </b-col>
-          <b-col cols="3">
+          <b-col @click="sendToS3" cols="3">
             <div class="mss-next-btn mt-5">
               Next
               <img
@@ -516,7 +518,11 @@ body {
             </div>
             <div class="d-flex align-items-center justify-content-between mt-3">
               <div class="mobloc-bcktxt" @click="showsteptwo = false">Back</div>
-              <b-button class="addbtn">Okay</b-button>
+              <b-button
+                class="addbtn"
+                @click="recalModelIfNotEnabledPermissionM()"
+                >Okay</b-button
+              >
             </div>
 
             <!-- <b-button class="tp-cancelbtn">Cancel</b-button> -->
@@ -551,7 +557,11 @@ body {
             </div>
             <div class="d-flex align-items-center justify-content-between mt-3">
               <div class="mobloc-bcktxt" @click="showsteptwo = false">Back</div>
-              <b-button class="addbtn">Okay</b-button>
+              <b-button
+                class="addbtn"
+                @click="recalModelIfNotEnabledPermissionM()"
+                >Okay</b-button
+              >
             </div>
 
             <!-- <b-button class="tp-cancelbtn">Cancel</b-button> -->
@@ -561,77 +571,219 @@ body {
     </div>
   </div>
 </template>
+
 <script>
-export default {
+// import { mapGetters } from "vuex";
+// import axios from "axios";
+// import { candidateImage } from "../../apiFunction";
+const snapShot = {
   data() {
     return {
-      showMob: true,
-      idShotComponent: false,
-      isCameraOpen: false,
-      snapShotComponent: true,
-      isPhotoTaken: false,
-      idisCameraOpen: false,
-      idisPhotoTaken: false,
-      idCardImageTakenStatus: "",
-      imageTakenStatus: "",
+      osCheckforModel: "",
+
+      showMob: false,
       showsteptwo: false,
-      env: "user",
-      user: "user",
-      mediaStream: null,
-      constraints: {
-        audio: false,
-        video: {
-          width: { ideal: 640 },
-          height: { ideal: 480 },
-          facingMode: "user",
-        },
-      },
+      snapShotComponent: true,
+      idShotComponent: false,
+      isCameraOpen: true,
+      isPhotoTaken: false,
+      idisCameraOpen: true,
+      idisPhotoTaken: false,
+      capturedImage: null,
+      capturedIdimage: null,
+      idCardImageTakenStatus: "Capture",
+      imageTakenStatus: "Capture",
+      topicid: "",
+      testid: "",
+      userid: "",
     };
   },
-  mounted() {
-    this.switchCamera("user");
+  created() {
+    this.askCameraPermission();
+    this.createCameraElement();
+    this.idcreateCameraElement();
+    // this.topicid = this.testDetails.topicID;
+    // this.testid = this.testDetails.testID;
+    // this.userid = this.userID;
+    let width = window.innerWidth;
+    if (width > 820) {
+      console.log(width);
+      this.showMob = false;
+    }
+    if (width < 820) {
+      this.showMob = true;
+    }
+    this.osCheckforModel = navigator.userAgentData.platform;
   },
+  mounted() {},
+  // computed: {
+  //   ...mapGetters("sectionVUEX", {
+  //     isLoadingStatus: "getIsLoadingStatus",
+  //     testDetails: "getTestDetails",
+  //     userID: "getUserID",
+  //     userDetials: "getUserDetails",
+  //     uuid: "getUUID",
+  //   }),
+  // },
   methods: {
-    async getMediaStream(constraints) {
-      try {
-        this.mediaStream = await navigator.mediaDevices.getUserMedia(
-          constraints
+    recalModelIfNotEnabledPermissionM() {
+      if (this.osCheckforModel === "Android") {
+        this.$bvModal.hide("mobilelocationmodalandroid");
+      } else {
+        this.$bvModal.hide("mobilelocationmodalios");
+      }
+      this.askCameraPermission();
+    },
+    cancel() {
+      const idCardObj = document.getElementById("midCam");
+      idCardObj.srcObject = null;
+      const picObj = document.getElementById("mobileselfieCam");
+      picObj.srcObject = null;
+
+      window.selfieCamStream.getVideoTracks()[0].stop();
+      window.idCamStream.getVideoTracks()[0].stop();
+      this.$router.push(
+        {
+          path: "/",
+          query: {
+            uuid: this.uuid,
+          },
+        },
+        () => {
+          this.$router.go(0);
+        }
+      );
+    },
+    askCameraPermission() {
+      navigator.mediaDevices
+        .getUserMedia({
+          video: true,
+          audio: true,
+        })
+        .then(
+          (res) => console.log(res),
+          (err) => {
+            if (this.osCheckforModel === "Android") {
+              this.$bvModal.show("mobilelocationmodalandroid");
+            } else {
+              this.$bvModal.show("mobilelocationmodalios");
+            }
+            console.log(err);
+          }
         );
-        let video = document.getElementById("mobileselfieCam");
-        video.srcObject = this.mediaStream;
-        video.onloadedmetadata = (event) => {
-          console.log(event);
-          video.play();
-        };
-      } catch (err) {
-        console.error(err.message);
+    },
+    createCameraElement() {
+      const constraints = {
+        audio: false,
+        video: true,
+      };
+
+      navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+        this.$refs.camera.srcObject = stream;
+        window.selfieCamStream = stream;
+      });
+    },
+    idcreateCameraElement() {
+      const constraints = {
+        audio: false,
+        video: true,
+      };
+
+      navigator.mediaDevices.getUserMedia(constraints).then((stream) => {
+        this.$refs.idcamera.srcObject = stream;
+        window.idCamStream = stream;
+      });
+    },
+    dataURLtoFile(dataurl, filename) {
+      var arr = dataurl.split(","),
+        mime = arr[0].match(/:(.*?);/)[1],
+        bstr = atob(arr[1]),
+        n = bstr.length,
+        u8arr = new Uint8Array(n);
+
+      while (n--) {
+        u8arr[n] = bstr.charCodeAt(n);
+      }
+
+      return new File([u8arr], filename, { type: mime });
+    },
+    async takePhoto() {
+      this.isPhotoTaken = !this.isPhotoTaken;
+      if (this.isPhotoTaken) {
+        this.imageTakenStatus = "Captured";
+      } else {
+        this.imageTakenStatus = "Capture";
+      }
+      const context = this.$refs.canvas.getContext("2d");
+      context.drawImage(this.$refs.camera, 0, 0, 265, 230);
+      var src = this.$refs.canvas.toDataURL("image/png");
+      var file = this.dataURLtoFile(src, "selfie.png");
+      this.capturedImage = file;
+    },
+    idtakePhoto() {
+      this.idisPhotoTaken = !this.idisPhotoTaken;
+      if (this.idisPhotoTaken) {
+        this.idCardImageTakenStatus = "Captured";
+      } else {
+        this.idCardImageTakenStatus = "Capture";
+      }
+      const context = this.$refs.idcanvas.getContext("2d");
+      context.drawImage(this.$refs.idcamera, 0, 0, 265, 230);
+      var src = this.$refs.idcanvas.toDataURL("image/png");
+      var file = this.dataURLtoFile(src, "Idpicture.png");
+      this.capturedIdimage = file;
+    },
+    sendToS3() {
+      window.selfieCamStream.getVideoTracks()[0].stop();
+      window.idCamStream.getVideoTracks()[0].stop();
+      var formData = new FormData();
+      // let topicId = this.topicid;
+      // let testID = this.testid;
+      // let cuserid = this.userid;
+      // formData.append("topicID", topicId);
+      // formData.append("testID", testID);
+      // formData.append("groupID", this.testDetails.groupID);
+      // formData.append("candidateID", this.userID);
+      formData.append("candidateImage", this.capturedImage);
+      formData.append("candidateImageWithID", this.capturedIdimage);
+      // formData.append("emailID", this.userDetials.email);
+      // formData.append("attemptNo", this.testDetails.attemptNo);
+
+      if (this.idisPhotoTaken && this.isPhotoTaken) {
+        // candidateImage(formData).then(() => {
+        //   window.selfieCamStream.getVideoTracks()[0].stop();
+        //   window.idCamStream.getVideoTracks()[0].stop();
+        //   if (this.testDetails.config.typingTest == true) {
+        //     this.$router.push({
+        //       path: "/TypingTest",
+        //     });
+        //   } else {
+        //     this.$router.push({
+        //       path: "/dos",
+        //     });
+        //   }
+        // });
+        console.log(formData);
+      } else {
+        console.log("please  capture the pictutre to continue");
       }
     },
-
-    async switchCamera(cameraMode) {
-      try {
-        // stop the current video stream
-        if (this.mediaStream != null && this.mediaStream.active) {
-          var tracks = this.mediaStream.getVideoTracks();
-          tracks.forEach((track) => {
-            track.stop();
-          });
-        }
-
-        // set the video source to null
-        document.getElementById("mobileselfieCam").srcObject = null;
-
-        // change "facingMode"
-        this.constraints.video.facingMode = cameraMode;
-
-        // get new media stream
-        await this.getMediaStream(this.constraints);
-      } catch (err) {
-        console.error(err.message);
+    goToTakeId() {
+      if (this.isPhotoTaken) {
+        this.idShotComponent = !this.idShotComponent;
+        this.snapShotComponent = !this.snapShotComponent;
+      } else {
+        console.log("please  capture the pictutre to continue");
       }
+    },
+    goToSelfie() {
+      this.idShotComponent = !this.idShotComponent;
+      this.snapShotComponent = !this.snapShotComponent;
+      // this.isPhotoTaken = !this.isPhotoTaken;
     },
   },
 };
+export default snapShot;
 </script>
 
 <style scoped>
