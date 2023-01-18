@@ -338,7 +338,7 @@ body {
 
 <template>
   <div>
-    <video id="mobileselfieCam" autoplay muted playsinline>Not available</video>
+    <!-- <video id="mobileselfieCam" autoplay muted playsinline>Not available</video> -->
 
     <div v-show="snapShotComponent">
       <div class="mtd-header">Add your Snapshot</div>
@@ -367,13 +367,17 @@ body {
           <b-col cols="12">
             <div class="mt-2">
               <div class="d-flex align-items-center justify-content-center">
-                <video
+                <!-- <video
                   id="mobileselfieCam"
                   ref="camera"
                   :width="265"
                   :height="200"
                   autoplay
-                ></video>
+                ></video> -->
+                <video id="mobileselfieCam" autoplay muted playsinline>
+                  Not available
+                </video>
+
                 <canvas
                   v-show="isPhotoTaken"
                   id="photoTaken"
