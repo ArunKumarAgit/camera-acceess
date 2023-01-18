@@ -22,7 +22,6 @@ export default {
       env: "environment",
       user: "user",
       mediaStream: null,
-
       constraints: {
         audio: false,
         video: {
@@ -33,8 +32,8 @@ export default {
       },
     };
   },
-  created() {
-    clearPhoto();
+  mounted() {
+    this.switchCamera("user");
   },
   methods: {
     async getMediaStream(constraints) {
@@ -44,7 +43,7 @@ export default {
         );
         let video = document.getElementById("cam");
         video.srcObject = this.mediaStream;
-        video.onloadedmetadata = event => {
+        video.onloadedmetadata = (event) => {
           video.play();
         };
       } catch (err) {
@@ -57,7 +56,7 @@ export default {
         // stop the current video stream
         if (this.mediaStream != null && this.mediaStream.active) {
           var tracks = this.mediaStream.getVideoTracks();
-          tracks.forEach(track => {
+          tracks.forEach((track) => {
             track.stop();
           });
         }
@@ -72,7 +71,6 @@ export default {
         await this.getMediaStream(this.constraints);
       } catch (err) {
         console.error(err.message);
-        alert(err.message);
       }
     },
 
@@ -98,6 +96,7 @@ export default {
 
     clearPhoto() {
       let canvas = document.getElementById("canvas");
+      console.log(canvas.getContext);
       let photo = document.getElementById("photo");
       let context = canvas.getContext("2d");
 
@@ -121,7 +120,6 @@ export default {
     takeSnap(event) {
       console.log(event);
       this.takePicture();
-      event.preventDefault();
     },
   },
 };

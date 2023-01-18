@@ -181,11 +181,11 @@ export default {
 
       navigator.mediaDevices
         .getUserMedia(constraints)
-        .then(stream => {
+        .then((stream) => {
           this.isLoading = false;
           this.$refs.camera.srcObject = stream;
         })
-        .catch(error => {
+        .catch((error) => {
           this.isLoading = false;
           alert("May the browser didn't support or there is some errors.");
         });
@@ -194,7 +194,7 @@ export default {
     stopCameraStream() {
       this.isCameraOpen = false;
       let tracks = this.$refs.camera.srcObject.getTracks();
-      tracks.forEach(track => {
+      tracks.forEach((track) => {
         track.stop();
       });
     },
