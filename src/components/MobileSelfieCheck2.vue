@@ -27,7 +27,7 @@ export default {
         video: {
           width: { ideal: 640 },
           height: { ideal: 480 },
-          facingMode: "environment",
+          facingMode: "user",
         },
       },
     };
