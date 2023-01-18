@@ -18,14 +18,17 @@
         :class="{ flash: isShotPhoto }"
       >
         <div class="camera-shutter" :class="{ flash: isShotPhoto }"></div>
-
+        <video id="cam" autoplay muted playsinline>Not available</video>
         <video
           v-show="!isPhotoTaken"
           ref="camera"
           :width="450"
           :height="337.5"
           autoplay
+          muted
+          playsinline
         ></video>
+        <video id="cam" autoplay muted playsinline>Not available</video>
 
         <canvas
           v-show="isPhotoTaken"
@@ -81,6 +84,8 @@
           :width="450"
           :height="337.5"
           autoplay
+          muted
+          playsinline
         ></video>
 
         <canvas

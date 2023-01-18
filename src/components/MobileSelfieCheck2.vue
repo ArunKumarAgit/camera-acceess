@@ -19,7 +19,7 @@
 export default {
   data() {
     return {
-      env: "environment",
+      env: "user",
       user: "user",
       mediaStream: null,
       constraints: {
